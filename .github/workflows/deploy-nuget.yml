@@ -32,12 +32,12 @@ jobs:
 
       - run: dotnet build src/Pollstar-Core.sln -c Release /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} /p:InformationalVersion=${{ steps.gitversion.outputs.Sha }}
       - run: dotnet test src/Pollstar-Core.sln
-      - run: dotnet pack src/Pollstar.Core/Pollstar.Core.csproj -c Release -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.Sha }} -p:PackageVersion=${{ steps.gitversion.outputs.MajorMinorPatch }}
+      - run: dotnet pack src/PollStar.Core/PollStar.Core.csproj -c Release -p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} -p:InformationalVersion=${{ steps.gitversion.outputs.Sha }} -p:PackageVersion=${{ steps.gitversion.outputs.MajorMinorPatch }}
       - name: Publish Artifact
         uses: actions/upload-artifact@v2
         with:
           name: nuget-package
-          path: src/Pollstar.Core/bin/Release/*${{ steps.gitversion.outputs.MajorMinorPatch }}.nupkg
+          path: src/PollStar.Core/bin/Release/*${{ steps.gitversion.outputs.MajorMinorPatch }}.nupkg
 
   deploy:
     needs: [build]
