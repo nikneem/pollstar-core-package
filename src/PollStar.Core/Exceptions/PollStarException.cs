@@ -5,6 +5,7 @@ namespace PollStar.Core.Exceptions;
 public class PollStarException : Exception
 {
     public PollStarErrorCode ErrorCode { get; }
+    public List<ErrorSubstituteDto> Substitutes { get; }
 
     protected PollStarException(PollStarErrorCode errorCode, string message, Exception? ex) : base(message, ex)
     {
