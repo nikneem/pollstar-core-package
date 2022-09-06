@@ -3,6 +3,6 @@
 public abstract class PollStarErrorCode
 {
     public abstract string Code { get; }
-    public virtual string TranslationKey => $"{Namespace}.{Code}";
-    public virtual string Namespace => GetType().ToString();
+    public virtual string TranslationKey => $"{ErrorNamespace}.{Code}";
+    public virtual string ErrorNamespace => GetType().Name;
 }
