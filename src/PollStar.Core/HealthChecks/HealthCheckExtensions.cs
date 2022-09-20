@@ -41,6 +41,7 @@ public static class HealthCheckExtensions
             },
             jsonSerializerOptions);
 
+        context.Response.StatusCode = report.Status == HealthStatus.Healthy ? 200 : 400;
         context.Response.ContentType = MediaTypeNames.Application.Json;
         return context.Response.WriteAsync(json);
     }
