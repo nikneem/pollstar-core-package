@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HexMaster.Randomizer.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PollStar.Core.HealthChecks;
 
@@ -11,6 +12,7 @@ public static class ServiceCollectionExtensions
         services.AddHealthChecks()
             .AddCheck<StorageAccountHealthCheck>("StorageAccountHealthCheck");
 
+        services.AddRandomizer();
         services.Configure<AzureConfiguration>(configuration.GetSection(AzureConfiguration.SectionName));
         return services;
     }

@@ -1,36 +1,41 @@
 ﻿using Azure.Data.Tables;
+using HexMaster.Randomizer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using PollStar.Core.Configuration;
 
 namespace PollStar.Core.HealthChecks;
 
-    public class StorageAccountHealthCheck : IHealthCheck
+public class StorageAccountHealthCheck : IHealthCheck
+{
+    private readonly IOptions<AzureConfiguration> _configOptions;
+    private readonly RandomGenerator _random;
+
+    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
+        CancellationToken cancellationToken = new())
     {
-        private readonly IOptions<AzureConfiguration> _configOptions;
-
-        public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new())
+        var config = _configOptions.Value;
+        try
         {
-            var config = _configOptions.Value;
-            try
-            {
-                var storageUri = new Uri($"https://{config.StorageAccount}.table.core.windows.net");
-                var tableClient = new TableClient(
-                    storageUri,
-                    "connectivitytest",
-                    new TableSharedKeyCredential(config.StorageAccount, config.StorageKey));
-                await tableClient.CreateIfNotExistsAsync(cancellationToken);
-                await tableClient.DeleteAsync(cancellationToken);
-                return HealthCheckResult.Healthy();
-            }
-            catch
-            {
-                return HealthCheckResult.Unhealthy();
-            }
-    }
-
-        public StorageAccountHealthCheck(IOptions<AzureConfiguration> configOptions)
+            var storageUri = new Uri($"https://{config.StorageAccount}.table.core.windows.net");
+            var randomTableName = _random.GetRandomLowercaseString();
+            var tableClient = new TableClient(
+                storageUri,
+                randomTableName,
+                new TableSharedKeyCredential(config.StorageAccount, config.StorageKey));
+            await tableClient.CreateIfNotExistsAsync(cancellationToken);
+            await tableClient.DeleteAsync(cancellationToken);
+            return HealthCheckResult.Healthy();
+        }
+        catch (Exception ex)
         {
-            _configOptions = configOptions;
+            return HealthCheckResult.Unhealthy(ex.Message);
         }
     }
+
+    public StorageAccountHealthCheck(IOptions<AzureConfiguration> configOptions, RandomGenerator random)
+    {
+        _configOptions = configOptions;
+        _random = random;
+    }
+}
