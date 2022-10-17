@@ -14,6 +14,7 @@ public static class ServiceCollectionExtensions
             .AddCheck<StorageAccountHealthCheck>("StorageAccountHealthCheck");
 
         services.AddTransient<IStorageQueueClientFactory, StorageQueueClientFactory>();
+        services.AddTransient<IStorageTableClientFactory, StorageTableClientFactory>();
 
         services.AddRandomizer();
         services.Configure<AzureConfiguration>(configuration.GetSection(AzureConfiguration.SectionName));

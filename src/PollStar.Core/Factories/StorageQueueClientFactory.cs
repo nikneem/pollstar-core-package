@@ -8,7 +8,9 @@ namespace PollStar.Core.Factories;
 
 public class StorageQueueClientFactory : IStorageQueueClientFactory
 {
+
     private readonly string _accountName;
+    
     public QueueClient CreateClient(string queueName)
     {
         var identity = new DefaultAzureCredential();
