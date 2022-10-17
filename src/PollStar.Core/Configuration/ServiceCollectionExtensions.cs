@@ -13,6 +13,7 @@ public static class ServiceCollectionExtensions
         services.AddHealthChecks()
             .AddCheck<StorageAccountHealthCheck>("StorageAccountHealthCheck");
 
+        services.AddTransient<IServiceBusClientFactory, ServiceBusClientFactory>();
         services.AddTransient<IStorageQueueClientFactory, StorageQueueClientFactory>();
         services.AddTransient<IStorageTableClientFactory, StorageTableClientFactory>();
 
