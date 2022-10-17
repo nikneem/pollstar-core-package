@@ -1,4 +1,5 @@
 ﻿using Azure.Data.Tables;
+using Azure.Identity;
 using HexMaster.Randomizer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
@@ -19,10 +20,15 @@ public class StorageAccountHealthCheck : IHealthCheck
         {
             var storageUri = new Uri($"https://{config.StorageAccount}.table.core.windows.net");
             var randomTableName = _random.GetRandomLowercaseString();
-            var tableClient = new TableClient(
-                storageUri,
-                randomTableName,
-                new TableSharedKeyCredential(config.StorageAccount, config.StorageKey));
+            var tableClient = string.IsNullOrWhiteSpace(config.StorageKey)
+                ? new TableClient(
+                    storageUri,
+                    randomTableName,
+                    new DefaultAzureCredential())
+                : new TableClient(
+                    storageUri,
+                    randomTableName,
+                    new TableSharedKeyCredential(config.StorageAccount, config.StorageKey));
             await tableClient.CreateIfNotExistsAsync(cancellationToken);
             await tableClient.DeleteAsync(cancellationToken);
             return HealthCheckResult.Healthy();
